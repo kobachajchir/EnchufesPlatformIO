@@ -1,0 +1,67 @@
+import React, { useEffect, useState } from "react";
+import { createRoot } from "react-dom/client";
+import "./styles.css"; // Importar el CSS aquí
+import { ApiResponse } from "./types/APITypes";
+import { ThemeProvider } from "./hooks/ThemeContext";
+import Home from "./screens/Home";
+
+export const mockData: ApiResponse = {
+  systemInfo: {
+    firmware: "1.0.0",
+    espTime: "2024-05-18T12:00:00Z",
+  },
+  enchufesData: [
+    {
+      deviceName: "Televisor",
+      mode: "MANUAL",
+      iconName: "tv",
+      state: "OFF",
+    },
+    {
+      deviceName: "Cafetera",
+      mode: "TIMERIZADO",
+      iconName: "coffee_maker",
+      timerStartTime: "2024-05-18T07:00:00Z",
+      timeForTimer: "00:30:00",
+      timeStop: "2024-05-18T07:30:00Z",
+    },
+    {
+      deviceName: "Estufa",
+      mode: "PROGRAMADO",
+      iconName: "heater",
+      timeOn: ["06:00", "18:00"],
+      timeOff: ["08:00", "22:00"],
+      daysActive: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      repeat: true,
+    },
+    {
+      deviceName: "Ventilador",
+      mode: "PROGRAMADO",
+      iconName: "fan",
+      timeOn: ["12:00"],
+      timeOff: ["14:00"],
+      daysActive: ["Saturday", "Sunday"],
+      repeat: true,
+      dateInterval: {
+        start: "2024-05-01",
+        end: "2024-09-30",
+      },
+    },
+  ],
+};
+
+function Index() {
+  return (
+    <ThemeProvider>
+      <Home />
+    </ThemeProvider>
+  );
+}
+
+// Obtén el contenedor en el que deseas renderizar tu aplicación
+const container = document.getElementById("root");
+const root = createRoot(container!); // Utiliza createRoot en lugar de ReactDOM.render
+
+root.render(<Index />);
+
+export default Index;

@@ -242,6 +242,14 @@ void loop() {
                     request->send(LittleFS, "/index.html", F("text/html"));
                 }
             });
+            // Ruta para el archivo JavaScript bundle
+            server.on("/bundle.js", HTTP_GET, [](AsyncWebServerRequest *request) {
+                request->send(LittleFS, "/bundle.js", "application/javascript");
+            });
+
+            server.on("/styles.css", HTTP_GET, [](AsyncWebServerRequest *request) {
+                request->send(LittleFS, "/styles.css", "text/css");
+            });
 
             server.serveStatic("/", LittleFS, "/");
         }
