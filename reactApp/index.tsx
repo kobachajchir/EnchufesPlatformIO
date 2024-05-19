@@ -3,7 +3,15 @@ import { createRoot } from "react-dom/client";
 import "./styles.css"; // Importar el CSS aquí
 import { ApiResponse } from "./types/APITypes";
 import { ThemeProvider } from "./hooks/ThemeContext";
+import { IconType } from "./types/IconTypes";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import EnchufeDetail from "./screens/EnchufesDetail";
 import Home from "./screens/Home";
+import Settings from "./screens/Settings";
+import Footer from "./components/Footer";
+import { UserProvider, useUser } from "./hooks/UserContext";
+import Login from "./screens/Login";
+require("react-web-vector-icons/fonts");
 
 export const mockData: ApiResponse = {
   systemInfo: {
@@ -12,32 +20,36 @@ export const mockData: ApiResponse = {
   },
   enchufesData: [
     {
+      id: "0",
       deviceName: "Televisor",
       mode: "MANUAL",
-      iconName: "tv",
-      state: "OFF",
+      iconName: IconType.Television,
+      state: "ON",
     },
     {
+      id: "1",
       deviceName: "Cafetera",
       mode: "TIMERIZADO",
-      iconName: "coffee_maker",
+      iconName: IconType.Coffee,
       timerStartTime: "2024-05-18T07:00:00Z",
       timeForTimer: "00:30:00",
       timeStop: "2024-05-18T07:30:00Z",
     },
     {
-      deviceName: "Estufa",
+      id: "2",
+      deviceName: "Velador",
       mode: "PROGRAMADO",
-      iconName: "heater",
+      iconName: IconType.Lamp,
       timeOn: ["06:00", "18:00"],
       timeOff: ["08:00", "22:00"],
       daysActive: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
       repeat: true,
     },
     {
+      id: "3",
       deviceName: "Ventilador",
       mode: "PROGRAMADO",
-      iconName: "fan",
+      iconName: IconType.Fan,
       timeOn: ["12:00"],
       timeOff: ["14:00"],
       daysActive: ["Saturday", "Sunday"],
@@ -50,10 +62,32 @@ export const mockData: ApiResponse = {
   ],
 };
 
+/*
+            {user && (
+              <>
+                <Route path="/home" element={<Home />} />
+                <Route path="/enchufe/:id" element={<EnchufeDetail />} />
+                <Route path="/settings" element={<Settings />} />
+              </>
+            )}
+*/
+
 function Index() {
+  const { user } = useUser();
   return (
     <ThemeProvider>
-      <Home />
+      <BrowserRouter>
+        <div className="h-screen w-screen">
+          <Routes>
+            <Route path="/" element={<Login />} />
+
+            <Route path="/home" element={<Home />} />
+            <Route path="/enchufe/:id" element={<EnchufeDetail />} />
+            <Route path="/settings" element={<Settings />} />
+          </Routes>
+          <Footer></Footer>
+        </div>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }
@@ -62,6 +96,10 @@ function Index() {
 const container = document.getElementById("root");
 const root = createRoot(container!); // Utiliza createRoot en lugar de ReactDOM.render
 
-root.render(<Index />);
+root.render(
+  <UserProvider>
+    <Index />
+  </UserProvider>
+);
 
 export default Index;

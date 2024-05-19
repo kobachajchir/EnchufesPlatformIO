@@ -1,35 +1,31 @@
 import React, { useEffect, useState } from "react";
-import { useTheme } from "../hooks/ThemeContext";
-import ScreenComponent from "../components/ScreenComponent";
-import Card from "../components/Card";
-import { ApiResponse, Enchufe } from "../types/APITypes";
-import { mockData } from "..";
 import { useNavigate } from "react-router-dom";
-import GoToButton from "../components/GoToButton";
+import { useTheme } from "../hooks/ThemeContext";
+//@ts-ignore
+import { MaterialCommunityIcons } from "react-web-vector-icons";
 import { IconType } from "../types/IconTypes";
+import { useUser } from "../hooks/UserContext";
 
-function Home() {
-  const [enchufesData, setEnchufesData] = useState<Enchufe[]>([]);
+function Login() {
   const [loaded, setLoaded] = useState<boolean>(false);
   const { selectThemeClass } = useTheme();
   const navigate = useNavigate();
+  const { user, login, logout, prefersDarkMode, setPrefersDarkMode } =
+    useUser();
+
+  useEffect(() => {}, []);
 
   useEffect(() => {
-    setEnchufesData(mockData.enchufesData);
+    setLoaded(true);
+    navigate("/home");
   }, []);
-
-  useEffect(() => {
-    if (enchufesData) {
-      setLoaded(true);
-    }
-  }, [enchufesData]);
 
   if (!loaded) {
     return <div>Loading...</div>;
   }
 
-  function handleGoToSettings() {
-    navigate("/settings");
+  function tryLogin() {
+    console.log("login btn");
   }
 
   return (
@@ -54,7 +50,7 @@ function Home() {
             "text-white"
           )} text-6xl font-bold text-center`}
         >
-          Inicio
+          Login
         </span>
       </div>
       <div
@@ -68,26 +64,31 @@ function Home() {
             "bg-gray-200",
             "bg-gray-800"
           )} justify-center items-center`}
-        >
-          {enchufesData.map((enchufe, index) => (
-            <Card key={index} enchufe={enchufe} classnames="mx-4" />
-          ))}
-        </div>
+        ></div>
         <div className="h-1/4 flex">
-          <GoToButton
-            fnGoTo={handleGoToSettings}
-            goToSectionTitle="Configuracion"
-            icon={IconType.Next}
-            classnames="text-2xl mr-2"
-            classnamesContainer={selectThemeClass(
-              "bg-gray-100 text-black",
-              "bg-gray-900 text-white"
-            )}
-          ></GoToButton>
+          <button
+            onClick={tryLogin}
+            className={`flex flex-row items-center justify-center bg-green-400 h-min rounded-xl p-2`}
+          >
+            <p
+              className={`text-lg ${selectThemeClass(
+                "text-black",
+                "text-white"
+              )}`}
+            >
+              {" "}
+              Iniciar sesion
+            </p>
+            <MaterialCommunityIcons
+              name={IconType.Next}
+              color={selectThemeClass("#000", "#fff")}
+              size={40}
+            ></MaterialCommunityIcons>
+          </button>
         </div>
       </div>
     </div>
   );
 }
 
-export default Home;
+export default Login;

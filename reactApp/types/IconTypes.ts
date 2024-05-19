@@ -1,3 +1,21 @@
-export IconType = {
-    
+export enum IconType {
+  Lamp = "lamp",
+  Fan = "fan",
+  Television = "television",
+  Coffee = "coffee", // Agregado para incluir la cafetera
+  Heater = "patio-heater",
+  PowerPlug = "power-plug",
+  Projector = "projector",
+  AC = "air-conditioner",
+  ThreeDPrinter = "printer-3d-nozzle",
+  Router = "router-wireless",
+  PowerSocket = "power-socket-au",
+  PowerON = "power-on",
+  PowerOFF = "power-off",
+  Power = "power",
+  Back = "arrow-left",
+  Next = "arrow-right",
+  Server = "server-network",
+  Save = "content-save",
+  Restore = "restore",
 }

@@ -3,6 +3,11 @@ import React, { useEffect, useState } from "react";
 import { getCurrentState } from "../tools/utils";
 import { Enchufe } from "../types/APITypes";
 import { useTheme } from "../hooks/ThemeContext";
+//@ts-ignore
+import { MaterialCommunityIcons } from "react-web-vector-icons";
+import { IconType } from "../types/IconTypes";
+import { useNavigate } from "react-router-dom";
+import { updateEnchufe } from "../tools/api";
 
 interface CardProps {
   enchufe: Enchufe;
@@ -12,10 +17,15 @@ interface CardProps {
 const Card: React.FC<CardProps> = ({ enchufe, classnames = "" }) => {
   const [currentState, setCurrentState] = useState<"ON" | "OFF">("OFF");
   const { selectThemeClass, isDarkMode } = useTheme();
+  const navigate = useNavigate();
 
   useEffect(() => {
     setCurrentState(getCurrentState(enchufe));
   }, [enchufe]);
+
+  function handleGoToEnchufeDetail() {
+    navigate(`/enchufe/${enchufe.id}`);
+  }
 
   const modeColorClass = (mode: string) => {
     switch (mode) {
@@ -30,37 +40,53 @@ const Card: React.FC<CardProps> = ({ enchufe, classnames = "" }) => {
     }
   };
 
+  async function handleChangeState() {
+    if (enchufe.mode === "MANUAL") {
+      //Send off signal, wait for response to change
+      console.log(`Trying to change Enchufe ${enchufe.id}`);
+      const data = await updateEnchufe(enchufe);
+      if (data) {
+        setCurrentState(currentState === "OFF" ? "ON" : "OFF");
+      }
+    }
+  }
+
   return (
     <div
       className={`${selectThemeClass(
         "bg-gray-100 text-black",
         "bg-gray-900 text-white"
       )} 
-      rounded-lg p-8 flex flex-col items-center ${classnames}`}
+      rounded-lg p-8 flex flex-col items-center w-1/4 ${classnames}`}
       style={{ borderRadius: "15px" }}
     >
       <div className="flex justify-center items-center mb-2">
-        <span
-          className={`icon-rayo ${
-            currentState === "ON" ? "text-yellow-500" : "text-black"
-          }`}
-          style={{ fontSize: "24px" }}
+        <button className="flex" onClick={handleChangeState}>
+          <MaterialCommunityIcons
+            name={IconType.Power}
+            color={currentState === "ON" ? "#22c55e" : "#ef4444"}
+            size={100}
+          ></MaterialCommunityIcons>
+        </button>
+      </div>
+      <button
+        className="flex flex-col items-center justify-center"
+        onClick={handleGoToEnchufeDetail}
+      >
+        <div className="flex items-center -mb-1">
+          <MaterialCommunityIcons
+            name={enchufe.iconName}
+            color={selectThemeClass("#000", "#fff")}
+            size={30}
+          ></MaterialCommunityIcons>
+        </div>
+        <h3 className="text-5xl mb-2 px-3">{enchufe.deviceName}</h3>
+        <div
+          className={`text-lg font-bold my-1 ${modeColorClass(enchufe.mode)}`}
         >
-          ⚡
-        </span>
-      </div>
-      <h3 className="text-5xl font-bold mb-2">{enchufe.deviceName}</h3>
-      <div className="flex items-center mb-2">
-        <span
-          className={`icon-${enchufe.iconName}`}
-          style={{ fontSize: "20px" }}
-        >
-          {/* Aquí puedes poner el icono */}
-        </span>
-      </div>
-      <div className={`text-lg ${modeColorClass(enchufe.mode)}`}>
-        {enchufe.mode}
-      </div>
+          {enchufe.mode}
+        </div>
+      </button>
     </div>
   );
 };
