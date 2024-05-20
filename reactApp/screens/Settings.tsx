@@ -8,12 +8,13 @@ import { mockData } from "..";
 //@ts-ignore
 import { MaterialCommunityIcons } from "react-web-vector-icons";
 import { fetchFirmwareAndTime } from "../tools/api";
+import ToggleButton from "../components/toggleButton";
 
 function Settings() {
   const [systemInfo, setSystemInfo] = useState<
     ApiResponse["systemInfo"] | null
   >(null);
-  const { selectThemeClass } = useTheme();
+  const { isDarkMode, selectThemeClass, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   async function getData() {
@@ -69,6 +70,18 @@ function Settings() {
         >
           Configuracion
         </span>
+        <div className="flex flex-row justify-center items-center h-min absolute right-0 mr-10  ">
+          <ToggleButton
+            onColor="bg-gray-200"
+            offColor="bg-gray-900"
+            filled={true}
+            circleColor={"bg-sky-400"}
+            toggle={isDarkMode}
+            setToggle={toggleTheme}
+            textOn="Oscuro"
+            textOff="Claro"
+          />
+        </div>
       </div>
       <div
         className={`flex flex-col w-full h-5/6 ${selectThemeClass(

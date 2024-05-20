@@ -11,6 +11,7 @@ import Settings from "./screens/Settings";
 import Footer from "./components/Footer";
 import { UserProvider, useUser } from "./hooks/UserContext";
 import Login from "./screens/Login";
+import { EnchufeModeType } from "./types/ModesTypes";
 require("react-web-vector-icons/fonts");
 
 export const mockData: ApiResponse = {
@@ -22,14 +23,14 @@ export const mockData: ApiResponse = {
     {
       id: "0",
       deviceName: "Televisor",
-      mode: "MANUAL",
+      mode: EnchufeModeType.MANUAL_MODE,
       iconName: IconType.Television,
       state: "ON",
     },
     {
       id: "1",
       deviceName: "Cafetera",
-      mode: "TIMERIZADO",
+      mode: EnchufeModeType.TIMERIZADO_MODE,
       iconName: IconType.Coffee,
       timerStartTime: "2024-05-18T07:00:00Z",
       timeForTimer: "00:30:00",
@@ -38,7 +39,7 @@ export const mockData: ApiResponse = {
     {
       id: "2",
       deviceName: "Velador",
-      mode: "PROGRAMADO",
+      mode: EnchufeModeType.PROGRAMADO_MODE,
       iconName: IconType.Lamp,
       timeOn: ["06:00", "18:00"],
       timeOff: ["08:00", "22:00"],
@@ -48,7 +49,7 @@ export const mockData: ApiResponse = {
     {
       id: "3",
       deviceName: "Ventilador",
-      mode: "PROGRAMADO",
+      mode: EnchufeModeType.PROGRAMADO_MODE,
       iconName: IconType.Fan,
       timeOn: ["12:00"],
       timeOff: ["14:00"],

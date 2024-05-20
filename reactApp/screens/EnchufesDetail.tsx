@@ -13,12 +13,17 @@ import {
 } from "../types/ModesTypes";
 //@ts-ignore
 import { MaterialCommunityIcons } from "react-web-vector-icons";
-import { IconType } from "../types/IconTypes";
+import {
+  IconType,
+  listDeviceIcons,
+  translateDeviceIconType,
+} from "../types/IconTypes";
 import GoToButton from "../components/GoToButton";
 import { espRepository } from "./../tools/espRepository";
 import { getCurrentState } from "../tools/utils";
 import ToggleButton from "./../components/toggleButton";
 import { EnchufeModeType } from "../types/ModesTypes";
+import { updateEnchufe } from "../tools/api";
 
 const EnchufeDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +33,18 @@ const EnchufeDetail: React.FC = () => {
   const { selectThemeClass } = useTheme();
   const navigate = useNavigate();
   const iconRef = useRef<any>(null); // Referencia al componente de icono
+
+  const deviceIcons = listDeviceIcons();
+
+  const defaultIconKey = Object.keys(IconType).find(
+    (key) => IconType[key as keyof typeof IconType] === enchufeData?.iconName
+  ) as keyof typeof IconType | undefined;
+
+  const defaultModeKey = Object.keys(EnchufeModeType).find(
+    (value) =>
+      EnchufeModeType[value as keyof typeof EnchufeModeType] ===
+      enchufeData?.mode
+  ) as keyof typeof EnchufeModeType | undefined;
 
   async function getEnchufe(): Promise<Enchufe | null> {
     if (id) {
@@ -54,6 +71,17 @@ const EnchufeDetail: React.FC = () => {
       setCurrentState(getCurrentState(enchufeData));
     }
   }, [enchufeData]);
+
+  async function handleChangeState() {
+    if (enchufeData.mode === "MANUAL") {
+      //Send off signal, wait for response to change
+      console.log(`Trying to change Enchufe ${enchufeData.id}`);
+      const data = await updateEnchufe(enchufeData);
+      if (data) {
+        setCurrentState(currentState === "OFF" ? "ON" : "OFF");
+      }
+    }
+  }
 
   if (!loaded) {
     return <p>Loading...</p>;
@@ -124,11 +152,16 @@ const EnchufeDetail: React.FC = () => {
 
   function handleIconChange(event: React.ChangeEvent<HTMLSelectElement>) {
     const newIcon = event.target.value as IconType;
+    console.log(newIcon);
+    const IconData = Object.values(deviceIcons).find(
+      (value) => value === IconType[event.target.value as keyof typeof IconType]
+    ) as IconType;
+    console.log(IconData);
     if (iconRef.current) {
-      iconRef.current.name = newIcon; // Actualiza el icono usando la referencia
+      iconRef.current.name = IconData; // Actualiza el icono usando la referencia
     }
     setEnchufeData((prevState) =>
-      prevState ? { ...prevState, iconName: newIcon } : null
+      prevState ? { ...prevState, iconName: IconData } : null
     );
   }
 
@@ -194,7 +227,7 @@ const EnchufeDetail: React.FC = () => {
         )} justify-center items-center`}
       >
         <div
-          className={`flex w-10/12 flex-col rounded-xl h-3/4 m-5 ${selectThemeClass(
+          className={`flex w-10/12 flex-col rounded-xl h-auto m-5 ${selectThemeClass(
             "bg-gray-300",
             "bg-gray-900"
           )} justify-center items-center pb-8 pt-5`}
@@ -249,12 +282,12 @@ const EnchufeDetail: React.FC = () => {
                 "bg-gray-200 text-black",
                 "bg-gray-800 text-white"
               )} rounded-lg`}
-              defaultValue={enchufeData?.iconName}
+              defaultValue={defaultIconKey || ""}
               onChange={handleIconChange}
             >
-              {Object.keys(IconType).map((key, index) => (
+              {Object.keys(deviceIcons).map((key, index) => (
                 <option value={key} key={index} className="text-lg rounded-lg">
-                  {key}
+                  {translateDeviceIconType(key)}
                 </option>
               ))}
             </select>
@@ -276,7 +309,7 @@ const EnchufeDetail: React.FC = () => {
                 "bg-gray-200 text-black",
                 "bg-gray-800 text-white"
               )} rounded-lg`}
-              defaultValue={enchufeData?.mode}
+              defaultValue={defaultModeKey || ""}
               onChange={handleModeChange}
             >
               {Object.keys(EnchufeModeType).map((key, index) => (
@@ -294,9 +327,7 @@ const EnchufeDetail: React.FC = () => {
                 filled={true}
                 circleColor="bg-white"
                 toggle={currentState === "ON"}
-                setToggle={() =>
-                  setCurrentState(currentState === "OFF" ? "ON" : "OFF")
-                }
+                setToggle={handleChangeState}
                 textOn="Activado"
                 textOff="Desactivado"
               />
