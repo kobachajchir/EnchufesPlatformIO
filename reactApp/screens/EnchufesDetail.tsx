@@ -118,6 +118,7 @@ const EnchufeDetail: React.FC = () => {
         return enchufeData;
     }
     console.log(newEnchufeData);
+    newEnchufeData.mode = newMode;
     setEnchufeData(newEnchufeData);
   }
 
@@ -196,9 +197,9 @@ const EnchufeDetail: React.FC = () => {
           className={`flex w-10/12 flex-col rounded-xl h-3/4 m-5 ${selectThemeClass(
             "bg-gray-300",
             "bg-gray-900"
-          )} justify-center items-center`}
+          )} justify-center items-center pb-8 pt-5`}
         >
-          <div className="flex flex-col justify-center items-center h-auto w-full">
+          <div className="flex flex-col justify-center items-center h-auto w-full mb-8">
             <MaterialCommunityIcons
               name={enchufeData?.iconName}
               color={selectThemeClass("#000", "#fff")}
@@ -221,26 +222,25 @@ const EnchufeDetail: React.FC = () => {
               Esta {currentState === "ON" ? " activado" : " desactivado"}
             </h1>
           </div>
-          <div className="flex flex-col justify-center items-center h-auto w-full">
-            <label className="text-lg">Modo</label>
-            <select
-              name="selectEnchufeMode"
-              id="selectEnchufeMode"
+          <div className="flex flex-row justify-center items-center h-auto w-full">
+            <label className="text-lg">Nombre</label>
+            <input
+              name="nameEnchufe"
               className={`p-2 m-2 ${selectThemeClass(
                 "bg-gray-200 text-black",
                 "bg-gray-800 text-white"
               )} rounded-lg`}
-              value={enchufeData?.mode}
-              onChange={handleModeChange}
-            >
-              {Object.keys(EnchufeModeType).map((key, index) => (
-                <option value={key} key={index} className="text-lg rounded-lg">
-                  {Object.values(EnchufeModeType)[index]}
-                </option>
-              ))}
-            </select>
+              value={enchufeData?.deviceName}
+              onChange={(e) =>
+                setEnchufeData((prevState) =>
+                  prevState
+                    ? { ...prevState, deviceName: e.target.value }
+                    : null
+                )
+              }
+            ></input>
           </div>
-          <div className="flex flex-col justify-center items-center h-auto w-full">
+          <div className="flex flex-row justify-center items-center h-auto w-full">
             <label className="text-lg">Icono</label>
             <select
               name="selectIcon"
@@ -249,7 +249,7 @@ const EnchufeDetail: React.FC = () => {
                 "bg-gray-200 text-black",
                 "bg-gray-800 text-white"
               )} rounded-lg`}
-              value={enchufeData?.iconName}
+              defaultValue={enchufeData?.iconName}
               onChange={handleIconChange}
             >
               {Object.keys(IconType).map((key, index) => (
@@ -267,9 +267,27 @@ const EnchufeDetail: React.FC = () => {
               ></MaterialCommunityIcons>
             </div>
           </div>
+          <div className="flex flex-row justify-center items-center h-auto w-full">
+            <label className="text-lg">Modo</label>
+            <select
+              name="selectEnchufeMode"
+              id="selectEnchufeMode"
+              className={`p-2 m-2 ${selectThemeClass(
+                "bg-gray-200 text-black",
+                "bg-gray-800 text-white"
+              )} rounded-lg`}
+              defaultValue={enchufeData?.mode}
+              onChange={handleModeChange}
+            >
+              {Object.keys(EnchufeModeType).map((key, index) => (
+                <option value={key} key={index} className="text-lg rounded-lg">
+                  {Object.values(EnchufeModeType)[index]}
+                </option>
+              ))}
+            </select>
+          </div>
           {enchufeData && isManual() && (
-            <div className="flex flex-col justify-center items-center h-auto w-full">
-              <label className="text-lg">Estado</label>
+            <div className="flex flex-row justify-center items-center h-auto w-full">
               <ToggleButton
                 onColor="bg-green-400"
                 offColor="bg-red-400"
@@ -279,178 +297,199 @@ const EnchufeDetail: React.FC = () => {
                 setToggle={() =>
                   setCurrentState(currentState === "OFF" ? "ON" : "OFF")
                 }
+                textOn="Activado"
+                textOff="Desactivado"
               />
             </div>
           )}
           {enchufeData && isTimerizado() && (
-            <div className="flex flex-col justify-center items-center h-auto w-full">
-              <label className="text-lg">Hora de inicio</label>
-              <input
-                type="time"
-                className={`p-2 m-2 ${selectThemeClass(
-                  "bg-gray-200 text-black",
-                  "bg-gray-800 text-white"
-                )} rounded-lg`}
-                value={enchufeData.timerStartTime}
-                onChange={(e) =>
-                  setEnchufeData((prevState) =>
-                    prevState
-                      ? { ...prevState, timerStartTime: e.target.value }
-                      : null
-                  )
-                }
-              />
-              <label className="text-lg">Duración</label>
-              <input
-                type="time"
-                className={`p-2 m-2 ${selectThemeClass(
-                  "bg-gray-200 text-black",
-                  "bg-gray-800 text-white"
-                )} rounded-lg`}
-                value={enchufeData.timeForTimer}
-                onChange={(e) =>
-                  setEnchufeData((prevState) =>
-                    prevState
-                      ? { ...prevState, timeForTimer: e.target.value }
-                      : null
-                  )
-                }
-              />
+            <div className="flex flex-row justify-center items-center h-auto w-full">
+              <div className="flex flex-row mr-2 justify-center items-center h-auto">
+                <label className="text-lg">Hora de inicio</label>
+                <input
+                  type="time"
+                  className={`p-2 m-2 ${selectThemeClass(
+                    "bg-gray-200 text-black",
+                    "bg-gray-800 text-white"
+                  )} rounded-lg`}
+                  value={enchufeData.timerStartTime}
+                  onChange={(e) =>
+                    setEnchufeData((prevState) =>
+                      prevState
+                        ? { ...prevState, timerStartTime: e.target.value }
+                        : null
+                    )
+                  }
+                />
+              </div>
+              <div className="flex flex-row ml-2 justify-center items-center h-auto">
+                <label className="text-lg">Duración</label>
+                <input
+                  type="time"
+                  className={`p-2 m-2 ${selectThemeClass(
+                    "bg-gray-200 text-black",
+                    "bg-gray-800 text-white"
+                  )} rounded-lg`}
+                  value={enchufeData.timeForTimer}
+                  onChange={(e) =>
+                    setEnchufeData((prevState) =>
+                      prevState
+                        ? { ...prevState, timeForTimer: e.target.value }
+                        : null
+                    )
+                  }
+                />
+              </div>
             </div>
           )}
           {enchufeData && isProgramado() && (
             <div className="flex flex-col justify-center items-center h-auto w-full">
-              <label className="text-lg">Horas de encendido</label>
-              {enchufeData.timeOn.map((time, index) => (
-                <input
-                  key={index}
-                  type="time"
-                  className={`p-2 m-2 ${selectThemeClass(
-                    "bg-gray-200 text-black",
-                    "bg-gray-800 text-white"
-                  )} rounded-lg`}
-                  value={time}
-                  onChange={(e) =>
-                    setEnchufeData((prevState) =>
-                      prevState
-                        ? {
-                            ...prevState,
-                            timeOn: prevState.timeOn.map((t, i) =>
-                              i === index ? e.target.value : t
-                            ),
-                          }
-                        : null
-                    )
-                  }
-                />
-              ))}
-              <label className="text-lg">Horas de apagado</label>
-              {enchufeData.timeOff.map((time, index) => (
-                <input
-                  key={index}
-                  type="time"
-                  className={`p-2 m-2 ${selectThemeClass(
-                    "bg-gray-200 text-black",
-                    "bg-gray-800 text-white"
-                  )} rounded-lg`}
-                  value={time}
-                  onChange={(e) =>
-                    setEnchufeData((prevState) =>
-                      prevState
-                        ? {
-                            ...prevState,
-                            timeOff: prevState.timeOff.map((t, i) =>
-                              i === index ? e.target.value : t
-                            ),
-                          }
-                        : null
-                    )
-                  }
-                />
-              ))}
-              <label className="text-lg">Días activos</label>
-              <div className="flex justify-center items-center">
-                {["D", "L", "M", "X", "J", "V", "S"].map((day, index) => (
-                  <div
+              <div className="flex flex-row justify-center items-center h-auto w-full">
+                <label className="text-lg">Horas de encendido</label>
+                {enchufeData.timeOn.map((time, index) => (
+                  <input
                     key={index}
-                    className={`w-10 h-10 m-1 flex justify-center items-center rounded-full cursor-pointer ${
-                      enchufeData.daysActive.includes(day)
-                        ? "bg-blue-500 text-white"
-                        : "bg-gray-300 text-black"
-                    }`}
-                    onClick={() =>
+                    type="time"
+                    className={`p-2 m-2 ${selectThemeClass(
+                      "bg-gray-200 text-black",
+                      "bg-gray-800 text-white"
+                    )} rounded-lg`}
+                    value={time}
+                    onChange={(e) =>
                       setEnchufeData((prevState) =>
                         prevState
                           ? {
                               ...prevState,
-                              daysActive: prevState.daysActive.includes(day)
-                                ? prevState.daysActive.filter((d) => d !== day)
-                                : [...prevState.daysActive, day],
+                              timeOn: prevState.timeOn.map((t, i) =>
+                                i === index ? e.target.value : t
+                              ),
                             }
                           : null
                       )
                     }
-                  >
-                    {day}
-                  </div>
+                  />
                 ))}
               </div>
-              <label className="text-lg">Repetir</label>
-              <ToggleButton
-                onColor="bg-green-400"
-                offColor="bg-red-400"
-                filled={true}
-                circleColor="bg-white"
-                toggle={enchufeData.repeat}
-                setToggle={(toggle) =>
-                  setEnchufeData((prevState) =>
-                    prevState ? { ...prevState, repeat: toggle } : null
-                  )
-                }
-              />
+              <div className="flex flex-row justify-center items-center h-auto w-full">
+                <label className="text-lg">Horas de apagado</label>
+                {enchufeData.timeOff.map((time, index) => (
+                  <input
+                    key={index}
+                    type="time"
+                    className={`p-2 m-2 ${selectThemeClass(
+                      "bg-gray-200 text-black",
+                      "bg-gray-800 text-white"
+                    )} rounded-lg`}
+                    value={time}
+                    onChange={(e) =>
+                      setEnchufeData((prevState) =>
+                        prevState
+                          ? {
+                              ...prevState,
+                              timeOff: prevState.timeOff.map((t, i) =>
+                                i === index ? e.target.value : t
+                              ),
+                            }
+                          : null
+                      )
+                    }
+                  />
+                ))}
+              </div>
+              <div className="flex flex-row justify-center items-center h-auto w-full">
+                <label className="text-lg">Días activos</label>
+                <div className="flex justify-center items-center mx-4">
+                  {["D", "L", "M", "X", "J", "V", "S"].map((day, index) => (
+                    <div
+                      key={index}
+                      className={`w-10 h-10 m-1 flex justify-center items-center rounded-full cursor-pointer ${
+                        enchufeData.daysActive.includes(day)
+                          ? "bg-blue-500 text-white"
+                          : "bg-gray-300 text-black"
+                      }`}
+                      onClick={() =>
+                        setEnchufeData((prevState) =>
+                          prevState
+                            ? {
+                                ...prevState,
+                                daysActive: prevState.daysActive.includes(day)
+                                  ? prevState.daysActive.filter(
+                                      (d) => d !== day
+                                    )
+                                  : [...prevState.daysActive, day],
+                              }
+                            : null
+                        )
+                      }
+                    >
+                      {day}
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-row justify-center items-center h-auto w-full">
+                <label className="text-lg mx-2">Repetir</label>
+                <ToggleButton
+                  onColor="bg-sky-400"
+                  offColor="bg-neutral-400"
+                  filled={true}
+                  circleColor="bg-white"
+                  toggle={enchufeData.repeat}
+                  setToggle={(toggle) =>
+                    setEnchufeData((prevState) =>
+                      prevState ? { ...prevState, repeat: toggle } : null
+                    )
+                  }
+                  disabled={false}
+                  textOn="Si"
+                  textOff="No"
+                />
+              </div>
               <label className="text-lg">Intervalo de fechas</label>
-              <input
-                type="date"
-                className={`p-2 m-2 ${selectThemeClass(
-                  "bg-gray-200 text-black",
-                  "bg-gray-800 text-white"
-                )} rounded-lg`}
-                value={enchufeData.dateInterval?.start || ""}
-                onChange={(e) =>
-                  setEnchufeData((prevState) =>
-                    prevState
-                      ? {
-                          ...prevState,
-                          dateInterval: {
-                            ...(prevState.dateInterval || {}),
-                            start: e.target.value,
-                          },
-                        }
-                      : null
-                  )
-                }
-              />
-              <input
-                type="date"
-                className={`p-2 m-2 ${selectThemeClass(
-                  "bg-gray-200 text-black",
-                  "bg-gray-800 text-white"
-                )} rounded-lg`}
-                value={enchufeData.dateInterval?.end || ""}
-                onChange={(e) =>
-                  setEnchufeData((prevState) =>
-                    prevState
-                      ? {
-                          ...prevState,
-                          dateInterval: {
-                            ...(prevState.dateInterval || {}),
-                            end: e.target.value,
-                          },
-                        }
-                      : null
-                  )
-                }
-              />
+              <div className="flex flex-row justify-center items-center h-auto w-full">
+                <input
+                  type="date"
+                  className={`p-2 m-2 ${selectThemeClass(
+                    "bg-gray-200 text-black",
+                    "bg-gray-800 text-white"
+                  )} rounded-lg`}
+                  value={enchufeData.dateInterval?.start || ""}
+                  onChange={(e) =>
+                    setEnchufeData((prevState) =>
+                      prevState
+                        ? {
+                            ...prevState,
+                            dateInterval: {
+                              ...(prevState.dateInterval || {}),
+                              start: e.target.value,
+                            },
+                          }
+                        : null
+                    )
+                  }
+                />
+                <input
+                  type="date"
+                  className={`p-2 m-2 ${selectThemeClass(
+                    "bg-gray-200 text-black",
+                    "bg-gray-800 text-white"
+                  )} rounded-lg`}
+                  value={enchufeData.dateInterval?.end || ""}
+                  onChange={(e) =>
+                    setEnchufeData((prevState) =>
+                      prevState
+                        ? {
+                            ...prevState,
+                            dateInterval: {
+                              ...(prevState.dateInterval || {}),
+                              end: e.target.value,
+                            },
+                          }
+                        : null
+                    )
+                  }
+                />
+              </div>
             </div>
           )}
         </div>
